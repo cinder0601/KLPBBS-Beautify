@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         KLPBBS Beautify
 // @namespace    cinder/@klpbbs-beautify
-// @version      1.0.0
+// @version      1.0.1
 // @description  Custom your forum!
 // @author       Cinder
 // @match        https://klpbbs.com/*
@@ -34,6 +34,16 @@
         type: 'text',
         default: 'https://s2.loli.net/2024/08/17/1yoM6X8czTOECet.png'
       },
+      skipexternal: {
+        label: '跳过外部链接提示',
+        type: 'checkbox',
+        default: true
+      },
+      removeAutoplay: {
+        label: '移除自动播放',
+        type: 'checkbox',
+        default: true
+    },
       autosign: {
           label: '自动签到',
           type: 'checkbox',
@@ -202,6 +212,28 @@
                     console.log('Already signed.');
                 }
             }
+        }
+    }
+
+    if (GM_config.get('skipexternal')) {
+        const links = document.querySelectorAll('a.text-decoration-none');
+        links.forEach(link => {
+            link.click();
+            showError("自动跳转链接");
+        });
+    }
+
+    if (GM_config.get('removeAutoplay')) {
+        const audioElements = document.querySelectorAll('audio');
+        var count = 0;
+        audioElements.forEach(audio => {
+            if (audio.hasAttribute('autoplay')) {
+                audio.removeAttribute('autoplay');
+                count++;
+            }
+        });
+        if (count != 0) {
+            showError(`移除了 ${count} 个自动播放`);
         }
     }
 
